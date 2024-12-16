@@ -213,23 +213,333 @@
 + 複製HTML原始碼，編輯id為「markdown-editor」的textarea內容，再另存為HTML檔案。
 + 注意程式碼區塊是由兩個「\```」包圍，若內部也有「\```」會造成渲染錯誤。有時可用「\\```」使其正常顯示，複製後可視需求修改。
 
+### HTML原始碼
+```html
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+  &lt;!-- 引入 Bootstrap 的 CSS 樣式 (包含了版面設計、按鈕樣式等) --&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css&quot;&gt;
+  &lt;!-- 引入 GitHub Markdown 樣式 (讓 Markdown 內容的顯示風格更接近 GitHub) --&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css&quot;&gt;
+  &lt;!-- 引入高亮程式碼樣式 (使用 highlight.js 為程式碼區塊提供 GitHub 風格的高亮顯示) --&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.0/styles/github.min.css&quot;&gt;
+  &lt;!-- 引入 Font Awesome 的圖示庫 (可用來顯示各種圖示，如社交媒體圖示、UI 元素等) --&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css&quot;&gt;
+  &lt;!-- 引入 Markdown 渲染的 JavaScript 庫 (用來將 Markdown 格式的文本轉換為 HTML) --&gt;
+  &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js&quot;&gt;&lt;/script&gt;
+  &lt;!-- 引入 highlight.js 庫 (提供語法高亮的功能，支持多種編程語言的程式碼高亮) --&gt;
+  &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.0/highlight.min.js&quot;&gt;&lt;/script&gt;
+  &lt;!-- 引入 Bootstrap 的 JavaScript (包含了 Popper.js 和其他 Bootstrap 的交互功能，如下拉選單、彈出框等) --&gt;
+  &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+  &lt;!-- 引入 Clipboard.js (提供複製程式碼的功能) --&gt;
+  &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js&quot;&gt;&lt;/script&gt;
+  
+  &lt;!-- 自定義樣式 --&gt;
+  &lt;style&gt;
+    /* 標籤頁下方的內容區塊 */
+    .tab-pane {
+      margin-bottom: 20px;
+      border-bottom-left-radius: 8px;  /* 圓角 */
+      border-bottom-right-radius: 8px; /* 圓角 */
+      border: 1px solid #ddd; /* 外框 */
+    }
+
+    /* 通用的內容外層邊距 */
+    .content-wrapper {
+      padding: 20px; /* 渲染區域的外邊距 */
+    }
+
+    /* 程式碼區塊的樣式 */
+    pre {
+      background-color: #f5f5f5; /* 程式碼區塊的背景色 */
+      border-radius: 8px; /* 圓角效果 */
+      padding: 15px; /* 程式碼區塊的內邊距 */
+      margin-top: 10px; /* 程式碼區塊和其他內容之間的間距 */
+    }
+
+    /* 自定義按鈕懸停效果 */
+    .btn-outline-primary:hover {
+      background-color: #007bff; /* 按鈕懸停顏色 */
+      color: white;
+    }
+
+    .code-block {
+      position: relative;
+    }
+
+    .code-block button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 10;
+    }
+
+    /* 修正按鈕內文字垂直居中 */
+    .btn {
+      line-height: 1.5rem; /* 確保按鈕內的文字垂直居中 */
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;container mt-5&quot;&gt;
+    &lt;!-- Tab Navigation: 用來在頁面中切換不同的內容 --&gt;
+    &lt;ul class=&quot;nav nav-tabs&quot; id=&quot;myTab&quot; role=&quot;tablist&quot;&gt;
+      &lt;li class=&quot;nav-item&quot; role=&quot;presentation&quot;&gt;
+        &lt;button class=&quot;nav-link active&quot; id=&quot;chapter-tab&quot; data-bs-toggle=&quot;tab&quot; data-bs-target=&quot;#chapter&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-controls=&quot;chapter&quot; aria-selected=&quot;true&quot;&gt;章節內容&lt;/button&gt;
+      &lt;/li&gt;
+      &lt;li class=&quot;nav-item&quot; role=&quot;presentation&quot;&gt;
+        &lt;button class=&quot;nav-link&quot; id=&quot;source-tab&quot; data-bs-toggle=&quot;tab&quot; data-bs-target=&quot;#source&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-controls=&quot;source&quot; aria-selected=&quot;false&quot;&gt;原始碼&lt;/button&gt;
+      &lt;/li&gt;
+      &lt;li class=&quot;nav-item&quot; role=&quot;presentation&quot;&gt;
+        &lt;button class=&quot;nav-link&quot; id=&quot;about-tab&quot; data-bs-toggle=&quot;tab&quot; data-bs-target=&quot;#about&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-controls=&quot;about&quot; aria-selected=&quot;false&quot;&gt;關於我&lt;/button&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;!-- Tab Content: 顯示對應的內容區塊 --&gt;
+    &lt;div class=&quot;tab-content&quot; id=&quot;myTabContent&quot;&gt;
+      &lt;!-- 章節內容 --&gt;
+      &lt;div class=&quot;tab-pane fade show active&quot; id=&quot;chapter&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;chapter-tab&quot;&gt;
+        &lt;div class=&quot;content-wrapper&quot;&gt;
+          &lt;div class=&quot;markdown-body&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 原始碼 --&gt;
+      &lt;div class=&quot;tab-pane fade&quot; id=&quot;source&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;source-tab&quot;&gt;
+        &lt;div class=&quot;content-wrapper&quot;&gt;
+          &lt;div class=&quot;code-block&quot;&gt;
+            &lt;!-- 添加複製程式碼按鈕 --&gt;
+            &lt;button class=&quot;btn btn-sm btn-outline-primary&quot; id=&quot;copy-source-btn&quot; data-clipboard-target=&quot;#markdown-source&quot;&gt;複製程式碼&lt;/button&gt;
+            &lt;textarea id =&quot;markdown-source&quot; class=&quot;form-control&quot; style=&quot;resize: none;&quot; spellcheck=&quot;false&quot; readonly&gt;&lt;/textarea&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 關於我 --&gt;
+      &lt;div class=&quot;tab-pane fade&quot; id=&quot;about&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;about-tab&quot;&gt;
+        &lt;div class=&quot;content-wrapper&quot;&gt;
+          &lt;!-- 軟體名稱 --&gt;
+          &lt;div class=&quot;card shadow-sm mb-4&quot;&gt;
+            &lt;div class=&quot;card-header&quot;&gt;
+              &lt;h5 class=&quot;card-title mb-0&quot;&gt;軟體名稱&lt;/h5&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;card-body&quot;&gt;
+              &lt;h4 class=&quot;card-title mb-2&quot;&gt;&lt;strong class=&quot;text-success&quot;&gt;YehMarkDownTemplate_v20241216a&lt;/strong&gt;&lt;/h4&gt;
+              &lt;ul&gt;
+                &lt;li&gt;用來撰寫說明文件、文章、數學公式等。&lt;/li&gt;
+                &lt;li&gt;響應式設計適合手機平板使用。&lt;/li&gt;
+                &lt;li&gt;可內嵌到Google協作平台使用&lt;/li&gt;
+              &lt;/ul&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;!-- 作者資訊 --&gt;
+          &lt;div class=&quot;card shadow-sm mb-4&quot;&gt;
+            &lt;div class=&quot;card-header&quot;&gt;
+              &lt;h5 class=&quot;card-title mb-0&quot;&gt;作者資訊&lt;/h5&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;card-body&quot;&gt;
+              &lt;div class=&quot;d-flex flex-column flex-sm-row align-items-center&quot;&gt;
+                &lt;!-- 圓形照片 --&gt;
+                &lt;div class=&quot;col-auto mb-3 mb-md-0&quot;&gt;
+                  &lt;img src=&quot;https://via.placeholder.com/100&quot; alt=&quot;Logo&quot; class=&quot;rounded-circle img-fluid&quot;&gt;
+                &lt;/div&gt;
+                &lt;!-- 文字區塊 --&gt;
+                &lt;div class=&quot;ms-3 text-center text-sm-start&quot;&gt;
+                  &lt;!-- 姓名，置中顯示 --&gt;
+                  &lt;div class=&quot;d-flex justify-content-center&quot;&gt;
+                    &lt;h4 class=&quot;card-title mb-3&quot;&gt;&lt;strong&gt;HsiupoYeh&lt;/strong&gt;&lt;/h4&gt;
+                  &lt;/div&gt;
+                  &lt;!-- 使用 badge 顯示職稱，並置中 --&gt;
+                  &lt;div class=&quot;d-flex justify-content-center justify-content-sm-start&quot;&gt;
+                    &lt;span class=&quot;badge bg-secondary me-2 mb-2 mb-sm-0&quot;&gt;地球物理學家&lt;/span&gt;
+                    &lt;span class=&quot;badge bg-secondary me-2 mb-2 mb-sm-0&quot;&gt;資深軟體工程師&lt;/span&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;card-body&quot;&gt;
+              &lt;!-- 其他資訊區塊 --&gt;
+              &lt;div class=&quot;text-md-start text-center&quot;&gt;
+                &lt;!-- 來自 Taiwan --&gt;
+                &lt;div class=&quot;mb-2 d-flex align-items-center&quot;&gt;
+                  &lt;div class=&quot;d-flex justify-content-center align-items-center&quot; style=&quot;width: 30px;&quot;&gt;
+                    &lt;i class=&quot;fas fa-map-marker-alt&quot; title=&quot;來自&quot;&gt;&lt;/i&gt;
+                  &lt;/div&gt;
+                  &lt;span&gt;Taiwan&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;!-- 個人網頁 --&gt;
+                &lt;div class=&quot;mb-2 d-flex align-items-center&quot;&gt;
+                  &lt;div class=&quot;d-flex justify-content-center align-items-center&quot; style=&quot;width: 30px;&quot;&gt;
+                    &lt;i class=&quot;fas fa-link me-2&quot; title=&quot;個人網頁&quot;&gt;&lt;/i&gt;
+                  &lt;/div&gt;
+                  &lt;a href=&quot;https://hsiupoyeh.github.io/&quot; target=&quot;_blank&quot;&gt;https://hsiupoyeh.github.io/&lt;/a&gt;
+                &lt;/div&gt;
+                &lt;!-- GitHub --&gt;
+                &lt;div class=&quot;mb-2 d-flex align-items-center&quot;&gt;
+                  &lt;div class=&quot;d-flex justify-content-center align-items-center&quot; style=&quot;width: 30px;&quot;&gt;
+                    &lt;i class=&quot;fab fa-github me-2&quot; title=&quot;GitHub&quot;&gt;&lt;/i&gt;
+                  &lt;/div&gt;
+                  &lt;a href=&quot;https://github.com/HsiupoYeh&quot; target=&quot;_blank&quot;&gt;https://github.com/HsiupoYeh&lt;/a&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;!-- 單一卡片展示所有更新紀錄 --&gt;
+          &lt;div class=&quot;card shadow-sm mb-4&quot;&gt;
+            &lt;div class=&quot;card-header&quot;&gt;
+              &lt;h5 class=&quot;card-title mb-0&quot;&gt;更新紀錄&lt;/h5&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;card-body&quot;&gt;
+              &lt;!-- 版本更新 --&gt;
+              &lt;div class=&quot;mb-4&quot;&gt;			  
+                &lt;h6 class=&quot;card-subtitle mb-2&quot;&gt;&lt;strong&gt;2024-12-16&lt;/strong&gt;&lt;/h6&gt;
+                &lt;ul&gt;
+                  &lt;li class=&quot;text-dark&quot;&gt;v20241216a&lt;/li&gt;
+				  &lt;li class=&quot;text-secondary&quot;&gt;改用Bootstrap5.3.3。&lt;/li&gt;
+				  &lt;li class=&quot;text-secondary&quot;&gt;新使用FontAwesome6.7.1。&lt;/li&gt;
+				  &lt;li class=&quot;text-secondary&quot;&gt;已知問題：當使用程式碼區塊時，渲染內容中若也恰好有「```」會造成渲染異常，因此請先將渲染中的內容用其他內容取代，建議「\```」。&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/div&gt;
+              &lt;!-- 分隔線 --&gt;
+              &lt;hr&gt;			  
+              &lt;!-- 版本更新 --&gt;
+              &lt;div class=&quot;mb-4&quot;&gt;			  
+                &lt;h6 class=&quot;card-subtitle mb-2&quot;&gt;&lt;strong&gt;2024-12-15&lt;/strong&gt;&lt;/h6&gt;
+                &lt;ul&gt;
+                  &lt;li class=&quot;text-dark&quot;&gt;v20241215a&lt;/li&gt;
+				  &lt;li class=&quot;text-secondary&quot;&gt;初版。&lt;/li&gt;
+				  &lt;li class=&quot;text-secondary&quot;&gt;使用Bootstrap4、markdown-it、highlight等函式庫。&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/div&gt;              
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;!-- 存放Markdown原始碼 --&gt;
+&lt;textarea id=&quot;markdown-editor&quot; class=&quot;d-none&quot;&gt;
+# YehMarkDownTemplate v20241216a
++ YEH自製MarkDown模板，方便撰寫文件。
+
+## 使用方法
++ 複製HTML原始碼，編輯id為「markdown-editor」的textarea內容，再另存為HTML檔案。
++ 注意程式碼區塊是由兩個「\```」包圍，若內部也有「\```」會造成渲染錯誤。有時可用「\\```」使其正常顯示，複製後可視需求修改。
+
 ### Javascript原始碼
-```javascript
+\```javascript
 function greet() {
-    console.log("Hello, world!");
+    console.log(&quot;Hello, world!&quot;);
 }
 greet();
-```  
+\```  
 
 ### Markdown原始碼
-```md
+\```md
 ### 怕錯誤的時候多加「\」
 \```javascript
 function greet() {
-    console.log("Hello, world!");
+    console.log(&quot;Hello, world!&quot;);
 }
 greet();
 \```
+\```  
+&lt;/textarea&gt;
+
+&lt;script&gt;
+  // 初始化 highlight.js
+  hljs.highlightAll();
+
+  // 初始化 markdown-it 並啟用程式碼高亮
+  const md = window.markdownit({
+    highlight: function (str, lang) {
+      if (lang &amp;&amp; hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch (__) {}
+      }
+      return &#39;&#39;; // 預設高亮處理
+    }
+  });
+
+  // 取得 Markdown 原始碼
+  const markdownContent = document.getElementById(&#39;markdown-editor&#39;).value;
+  const markdownContentLines = markdownContent.split(&#39;\n&#39;);  // 以換行符分割成行
+  const markdownContentLinesCount = markdownContentLines.length;  // 計算行數
+
+  // 渲染 Markdown 並顯示在第一個標籤頁 (章節內容)
+  const chapterDiv = document.querySelector(&#39;#chapter .markdown-body&#39;);
+  chapterDiv.innerHTML = md.render(markdownContent);
+
+  // 在第二個標籤頁顯示 Markdown 原始碼 (原始碼)
+  const markdownSource = document.getElementById(&#39;markdown-source&#39;);
+  markdownSource.textContent = markdownContent;
+  markdownSource.rows = markdownContentLinesCount;  // 設置行數
+
+  // 創建複製按鈕並綁定 ID
+  const codeBlocks = document.querySelectorAll(&#39;pre code&#39;);
+  codeBlocks.forEach(function(codeBlock, index) {
+    const codeBlockId = `code-${index + 1}`;
+    codeBlock.setAttribute(&#39;id&#39;, codeBlockId);
+
+    const copyButton = document.createElement(&#39;button&#39;);
+    copyButton.innerText = &#39;複製程式碼&#39;;
+    copyButton.classList.add(&#39;btn&#39;, &#39;btn-sm&#39;, &#39;btn-outline-primary&#39;);
+    copyButton.setAttribute(&#39;data-clipboard-target&#39;, `#${codeBlockId}`); // 綁定按鈕到對應的程式碼區塊
+
+    // 把複製按鈕加到程式碼區塊中
+    const codeBlockParent = codeBlock.parentElement;
+    codeBlockParent.classList.add(&#39;code-block&#39;);
+    codeBlockParent.appendChild(copyButton);
+  });
+
+  // 使用 Clipboard.js 來處理複製功能
+  const clipboard = new ClipboardJS(&#39;.btn-outline-primary&#39;);
+  clipboard.on(&#39;success&#39;, function(e) {
+    const copyButton = e.trigger;
+    copyButton.innerText = &#39;已複製！&#39;;
+    setTimeout(function() {
+      copyButton.innerText = &#39;複製程式碼&#39;;
+    }, 1500);
+    e.clearSelection();
+  });
+
+  clipboard.on(&#39;error&#39;, function(e) {
+    const copyButton = e.trigger;
+    copyButton.innerText = &#39;複製失敗！&#39;;
+    setTimeout(function() {
+      copyButton.innerText = &#39;複製程式碼&#39;;
+    }, 1500);
+    e.clearSelection();	
+  });
+
+  // 使用 Clipboard.js 來處理原始碼複製功能
+  const clipboard2 = new ClipboardJS(&#39;#copy-source-btn&#39;);
+  clipboard2.on(&#39;success&#39;, function(e) {
+    const copyButton = e.trigger;
+    copyButton.innerText = &#39;已複製！&#39;;
+    setTimeout(function() {
+      copyButton.innerText = &#39;複製程式碼&#39;;
+    }, 1500);
+    e.clearSelection();
+  });
+
+  clipboard2.on(&#39;error&#39;, function(e) {
+    const copyButton = e.trigger;
+    copyButton.innerText = &#39;複製失敗！&#39;;
+    setTimeout(function() {
+      copyButton.innerText = &#39;複製程式碼&#39;;
+    }, 1500);
+    e.clearSelection();	
+  });
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
 ```  
 </textarea>
 
@@ -261,7 +571,7 @@ greet();
   // 在第二個標籤頁顯示 Markdown 原始碼 (原始碼)
   const markdownSource = document.getElementById('markdown-source');
   markdownSource.textContent = markdownContent;
-  markdownSource.rows = markdownContentLinesCount;  // 設置行數
+  markdownSource.rows = markdownContentLinesCount+1;  // 設置行數
 
   // 創建複製按鈕並綁定 ID
   const codeBlocks = document.querySelectorAll('pre code');
