@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 引入 Bootstrap 的 CSS 樣式 (包含了版面設計、按鈕樣式等) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+  <!-- 引入 GitHub Markdown 樣式 (讓 Markdown 內容的顯示風格更接近 GitHub ，相容於Mathpix Markdown-it 的 JavaScript) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css">
+  <!-- 引入 highlight.js 的 高亮程式碼樣式 (讓 Markdown 內容的程式碼區塊提供 GitHub 風格的高亮顯示，相容於Mathpix Markdown-it 的 JavaScript) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.0/styles/github.min.css">
+  <!-- 引入 Font Awesome 的圖示庫 (可用來顯示各種圖示，如社交媒體圖示、UI 元素等) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+  <!-- 引入 Mathpix Markdown-it 的 JavaScript (提供 Markdown 解析和渲染功能，內建程式碼高亮，與 highlight.js 的 CSS 樣式相容) -->
+  <script src="https://cdn.jsdelivr.net/npm/mathpix-markdown-it@2.0.6/es5/bundle.js"></script>
+  <!-- 引入 Bootstrap 的 JavaScript (包含了 Popper.js 和其他 Bootstrap 的交互功能，如下拉選單、彈出框等) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <!-- 引入 Clipboard.js (提供複製程式碼的功能) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
+
+  <!-- 自定義樣式 -->
+  <style>
+    /* 標籤頁下方的內容區塊 */
+    .tab-pane {
+      margin-bottom: 20px;
+      border-bottom-left-radius: 8px;
+      /* 圓角 */
+      border-bottom-right-radius: 8px;
+      /* 圓角 */
+      border: 1px solid #ddd;
+      /* 外框 */
+    }
+
+    /* 通用的內容外層邊距 */
+    .content-wrapper {
+      padding: 20px;
+      /* 渲染區域的外邊距 */
+    }
+
+    /* 程式碼區塊的樣式 */
+    pre {
+      background-color: #f5f5f5;
+      /* 程式碼區塊的背景色 */
+      border-radius: 8px;
+      /* 圓角效果 */
+      padding: 15px;
+      /* 程式碼區塊的內邊距 */
+      margin-top: 10px;
+      /* 程式碼區塊和其他內容之間的間距 */
+    }
+
+    /* 自定義按鈕懸停效果 */
+    .btn-outline-primary:hover {
+      background-color: #007bff;
+      /* 按鈕懸停顏色 */
+      color: white;
+    }
+
+    .code-block {
+      position: relative;
+    }
+
+    .code-block button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 10;
+    }
+
+    /* 修正按鈕內文字垂直居中 */
+    .btn {
+      line-height: 1.5rem;
+      /* 確保按鈕內的文字垂直居中 */
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-1">
+    <!-- Tab Navigation: 用來在頁面中切換不同的內容 -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="chapter-tab" data-bs-toggle="tab" data-bs-target="#chapter" type="button"
+          role="tab" aria-controls="chapter" aria-selected="true">章節內容</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="source-tab" data-bs-toggle="tab" data-bs-target="#source" type="button"
+          role="tab" aria-controls="source" aria-selected="false">原始碼</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab"
+          aria-controls="about" aria-selected="false">關於我</button>
+      </li>
+    </ul>
+
+    <!-- Tab Content: 顯示對應的內容區塊 -->
+    <div class="tab-content" id="myTabContent">
+      <!-- 章節內容 -->
+      <div class="tab-pane fade show active" id="chapter" role="tabpanel" aria-labelledby="chapter-tab">
+        <div class="content-wrapper">
+          <div class="markdown-body"></div>
+        </div>
+      </div>
+
+      <!-- 原始碼 -->
+      <div class="tab-pane fade" id="source" role="tabpanel" aria-labelledby="source-tab">
+        <div class="content-wrapper">
+          <div class="code-block">
+            <!-- 添加複製程式碼按鈕 -->
+            <button class="btn btn-sm btn-outline-primary" id="copy-source-btn" data-clipboard-target="#markdown-source">複製程式碼</button>
+            <textarea id="markdown-source" class="form-control" style="resize: none;" spellcheck="false" wrap="off" readonly></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 關於我 -->
+      <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+        <div class="content-wrapper">
+          <!-- 軟體名稱 -->
+          <div class="card shadow-sm mb-4">
+            <div class="card-header">
+              <h5 class="card-title mb-0">軟體名稱</h5>
+            </div>
+            <div class="card-body">
+              <h4 class="card-title mb-2"><strong class="text-success">YehMarkDownTemplate_v20241217a</strong></h4>
+              <ul>
+                <li>用來撰寫說明文件、文章、數學公式等。</li>
+                <li>響應式設計適合手機平板使用。</li>
+                <li>可內嵌到Google協作平台使用</li>
+              </ul>
+            </div>
+          </div>
+          <!-- 作者資訊 -->
+          <div class="card shadow-sm mb-4">
+            <div class="card-header">
+              <h5 class="card-title mb-0">作者資訊</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-column flex-sm-row align-items-center">
+                <!-- 照片 -->
+                <div class="col-auto mb-3 mb-md-0">
+                  <img class="img-fluid" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAUQElEQVR4nOydDVwU1f7/P7MCEiiuenlQfFg0HwGVSkvt/iXLStGLlonWrch/ZT5r91p2zbS691bXMutaVr9fmT1a2b1SAmU+gJkKWIDsYkoKaD6B4oJA8rTn9zoDG8vumd2Z3Z3ZhZ3Pi30te+bMzNk97/l+v+ecmXM0UOXTUgHwcakA+LhUAHxcKgA+LhUAH5cKgI9LBcDHpQLg41IB8HH5yX2CxNxEramhc3ITx/UHIaMIOC0xQQcOWhACEwFA+D/6kX9v/UwYaRYvNCdY7mveht/TmjeYbNLRkk5sjm/O01o20nZfm/ISgbJZlsn2PK1laDkGIUYTUAJwJSYTjISQ/MYmzfa6+SklctUPJ8dB+Uo3BS4DQSIh0HEctOyKVgFoAwArHXwZMwgxZf42L3Wtu+vKrQDQiocpcBkBlnL0Srf44VQAnAegzfcA2XB13o7l7qoztwGQmJsUryHcZgLoWr+oCoC7AaBJJhMxEhMeql+4Y7ur9dbJ1QNQzcidtUzDcZs4cBFEII/UdHfLmfN7a9kIuECO42ZrpgziTGlFGa6c2yULQE2+X6drXoUJyZbUqhZAZgvQ9jfLaFjw9S3O1qFLzUD/Tte8yhEku3IMVS4r3v+NaXud3dlpFzAzf/YycFhpna66AOlyw2+m00weUmlKP35I6rmdcgGzjsyZTkBowKeFhckL1gThnvCZmNhzAmqaanCytgQ1TbUori3FidoSFFQVqi7A/S6g9f8mMqNpibTAUHJHUGLug1qgbg1o5VvpocgHcEuPCfz/wZ2CEBYQ2ryhZ2ueC3XlOHKlECdrS3Gk0oBfamTr4/A5EQ3ZDEBeAAL8ri4DNKN+vyQsFN1luMP9wzuHYlLnCW3SDlTk4ERtKfIrDcirLJRaJFUt4sBpuX8nrCWLxXcYSXIB9OoP9Ksr5rtzLU1aiwn6IOZd/sp3VT9cagZi/8VsFFWXqC5ArAswdyc3NsZh+beiTKukIHDUoqErwWnuFNoe13Vkq9l3Qf2CIjGy23BM6zUJMyOnoEeAFgGaAJz67azTx+zgQaCFuEBAU4lvxPUPSHIBHKeZYO/kxb+VinIDUtTFLxgzIxP4F9X3F3P4177yHFxprHHruTqMNFgKQJQbEO0Cko4m6bgmTTHTpLWYoKl/mMwHgkpp38Uc/HKlBFtPp+JKQ43qAixaTaSxIUqMGxDtAmIfi00Gxwmafyp/LuD3VoAjfXcxE7vKM1FvakDfayLFFqON+gdFIq57NO7vPx2Du+p4N3H8Cvs7+44LMEtTim+KHPYLiAdgUew8GgbYy1PbVIMZ4YmijjcwSId9FQfx7qlP8NHpbThSVYgTNaWoJw3o5wQQ/YMjMSF0DB4ZMAtd/INRUW/EpTrj79t9DgCCq/im6DNH2UTHAIQQrSOPUdNUi7L6ctGB4OMD5vMma2dZBvKrCvkm4Jfn0vhvOK7naAwM6o/xPUfj2mCd2GLymtMvgX9Ra5BRlo1PS1JR2eBj8QLH2fTTsCTaAsQsjFkJcBGO8oX6h2JI8CCxh8W4HqNRVneR7ym0FI348yoN+Orcd9h2Ng0V9ZUI0PgjIjBM9LF7dtbi+h7RSB4wg3cRnTUBOGblIjqsBQDRIr3oJUe5xLuABbErWb1/1tL6aXGj9gab9A0lm3CTdjRzHwrBBQqBQK8gjRMKq4qQfiETm0u+QHVjLQ9DLwkwRHWJxC3hY3CfLgF/6KzFDxfz+PSOCwCuuheAhbEbxOS7UF+OuxhxQMGVo9h2LgW3/YEdJDqCwFKGqiKkncvEuyVfoKaxBv4UhmvEwdC5UwBGdB+M+YNmoat/EH4ozxPM274B4AKRfvxZR7mkACCqXUmv1mlhU/gr1FINpB7bzn3FjwMIQTBeAgRmGSqPI+18BraeSuMDvwAJMFAQFgxOQlf/YJRUn0WVVZzQvgEAPAIALVxciG2PYHd/LQ8AtRAFIiCQOkhEwdNXFWHH2QxkluXwTULq98VoZPfBuH/AVB6E4uqzfJ8CVADaSgoAYZ3DEGPVI0grZPelTFQ31f4+IjhJCIKezkFgFm3+ZZbn4J0TzfFC/+DefOU6EgXhgQFT0TsoDD9XlthYBLnU4QCgmtjTtnJptP9zTRH/P4WgoMqASaHxzOM0Q1COX6pdGy4uqDyOT0tTcbjCwJdtSEiUw32GdYvCAwOn8u/5FUWyg+BJAGR5MkhfXcj3CVgrtuuwNp+PVBViRaFwGZ8YtAB3hrMBkSoKwJojbyAufSYOXzKI2ue2XmOw545N+FvsXISIsCDtUbI9GpZlzLFJiw2xHSjiITAIQ/DkYPdBYNbZ38ok5U++dip+nPYh/97RJBsAxb+V2qQFdwrGgCDbwMwRBCtlgMAZrRoxF1/f+gru1k30dFHcJtkA2HMpk5ke25U9XJxfVYi/2oNgyAJMlhGCn6uKsSpvI87U2rcOw7RR+NcNi/hXR5BsAJjHBax1X+TdgvvkVxbiL44giJAPgu2n92LSrvl4Ub/ZYd6ZuonIn/4hbo+8UbbyKCFZHw8/xIgDqBsI7yw8WMRDoBeG4CmZIaD64OQODEu5G1tO7LCbjwaG74x7Es+MmitreeSUrAAYqo8y08d2Z48JmEUheNwOBH8bugBTZIaA6p8FmzF9z1/xn1N77OabO3gaCmZ8hGit4yamt0lWAAqusO/wtW4OssRDUGAHgmHKQHC0shgrf9yIrHK93XzUGqTfsR4PD5kme5ncKVkBqGmq4Xv/rDUiZDjvChwpr9KA5UeEIVhFIeglPwSRQWG4MTRGVN41cXOx9rr24xJknyJGz7ACtPLHdbcdMmaJQrDMLgQLkaAABFJErcDOO9ejb7D44WpPSXYADhkPM9PHigQAXgzBITtuIbp7FHZOXs+/e7NkB8BVN2BWntGApXYgeHq48hC8Zvgcjx4QvuciJCAYX976vFdDoMgsYYJuoIf91oC1eAjyhSFYPXwhpvZWFoKdZ7IwZefj+LWG3YFEIfjPbc8jxkshUAQAd7gBs3KNBizJ8y4ICo3FGJ86D9+eyWJupxDsSngV48LFBZJKShEAqBvYddHWDYztPpp/8keqKASLc4UheCZaeQioHtn/Iv732NeC2/876e9eB4FiE0Xqq9l9ApNCxT1IYi0KwSIvhODZ3PfsQvB+/FOI6eE97kAxAA5eZruBP0fOdPqYzRAI36eyJmYhpvV2evocp7X2p/ewXs9+JqNbQDC2THhK8TIJSTEAhNwAdQEDJT74YancyyIgiFQeglcKtmJ9ARuCvl3CsP32vyteJpYUnStYKBic3muyS8f96bIBC3+yD8GfPATB//zMdgfjI2LwxMjZipfJWsoCcDmHv8/PWreHxtsdIRQjCsECOxCsjfUMBGt+eg/fnGa3DigAU/p5djhZ8dnCWZ1CaLkd3FVRCOb/KAzBsyM8A8FD+16E/nIxc9u/xy9RvDyWUhyA7efTmel/7uN8MGgpHoLD9iG4oWe0W84lRXd/9zQq623vLqZB4ZOjPOcKFAeABoPfCQSDt4e5p9n2owMIeot8csidopWfnPkCcxsFoF8XzwwceWTBiN0MAKhGhji+T0CsKASP2YHAEzpwQY90gXhg4x+XKl4eeAqAI1WF7GAwLB4RLgaDlvqxwoB5h9e47Xju0NIDrzNdwc0RMUjod5Pi5fHYkjEfn9nGTHdHMGgpHoIc74GAVv7qw+8ytz0WrfzdRB4D4IBAz+D9fd0TDFqKQvBotvdAsPXEHugrbFsF1AooHQt4DAA+GCy3ncqOBoN3uCkYtNThCgMeyRKGYGhIFKb3Va6JuC5/KzN9ZZyyLQKPrhom5AbmR8kz1ZwjCP4xahFmKARB2uksnKq2vYcgob+ycYBHAaCB4IEK22cH5LICaIHgYXsQxCkHAcsKdAsIxn2DblXk/PA0AFRvlW5hpi+QyQpQHb5kwP93BEE/+SFIE2gSjo9QrqPK4wBQK7BTIBZ4sN89sp2Xh+CQMAT/jFuEu2SGgLYIWMHgVAXdgMcBoProNDsWuLv3FEQEuq9fwFoUgrkHnxHc/sJ18kPAsgLUDSjVGvAKADxlBahyLhnwkD0Irl+Eu/rLB0HaKbYb6NfVhwCgeqvkA2b6neHxsloBmCE4IAzB4qFJsp37NKMlQDWixwDZzmkprwGgurGGnzKWpWSZrQBaIEi2A4FconEAqzk4vpcygaDXAEC1yYNWAB6EgAWANqCLIuf2KgCoFfhWwAosGqjM8oTZF5WHgAUADQSVkOzLx0sVtQKsTqCbe47mZwi5NliHrn7BwlOlEeuPDiZVI+xp16401IiaW9AdYo0OKiWvA4BagXVFm7Bi0HybbXLOEeSMhmt1OOhg3gBn1a2zMvB5lQswi7qB9rCe4OpRc/m5glyVUuaeJa8EgGrN0Zc9XQRRenn0IpchYAFQWaeMW/BaAM7XleONk+xxAm/Ty2MW4x4XIGACoFBc4HUxgKW+PJuKO8InMJeMobFC6rm2LQbLVbmA1hW/wEy32Md6u+Vnq3Sh2UIpBDTf5yftTyjFEqvbt7T6guTjOCOvBoBqdeE6fDr6DZv0Ln7ByDMWYl95NpRcOfS7s9n4+P89xyzrKxQCIg0CoX5/pSyA17oAs85fLce2M6nMbauGLcCgLs4/V+iMssr1uDdTuJ9g/Y2LMWuAeHfQV2DQ54dz4ia0dlVeDwDVxpNbmNPGUyvwwognFC+POyG4OYI9X8CRSyedLp8UtQsAqJ4uXMdM7xUYio1xyt//f6hcjzkZwhC8KhIC1oQRp6rLmL2DcqjdAEBdwYvH3mRuu657NJYNVqar2FIUgtn2ILhpMZLsQED9/3iGBVDq6kd7AoAq/UIG0s+zxwqS+ibg4QGzFC9TMwSrBbfbg2B8eAyzCaivUK4TrF0BQPXCsTdRJLCMzMNR93hkWphDZXok2YFgw9jFSBpoC8FkgUfDPy7a7dby2ZPXNwNZWpL3LL64aSNzgqnVwxfi2i46frEoy34AYtGYt/7fsp3PykcsOgOs+wYIWjsTDpbpMTaMHdS9Nrb5MfCtvzQ3EemVP6WvLQCppYcU8/9orwBUN9bws4RtHv0v5vY5/RIUL5MY8RAQ4NMTezB74ESm+S9Q0PyjPboAs6gbSM5Rvgnoql4bt4Sv/NkMl1BZX4NPFDT/aM8AoAUCexNEeateH7eEOVXc/vMFipp/tHcAIGKWsPaktwzC8wvKpXYZA1jrp8sGPJC9Am9ct5a/W8ierkhYBNKppWMZO4WIGO9PPXUI+8/Lc3OJPXUIAKiKrpTggawVeGnEEw7XDF539H2k/LrXqcEg82ATaTOoRNoMRBGrkUTaMvjytuftlmlr0V73/BAS1e5dgKXOXS3H/VkrkFmWLZinq38wnhuxEJ/f/DIS+8j71A+98v8SOxvPXe94BRGlbgGzFic24xzDHNJ2yNXiymkzvGpJf+uV03o1tb1y2Onmz4SRZn2VEeZw8PIhyaKagz9XFeOj4lRsP7XXLRaAAja8WxRu7zMGSVETRZl/sxbufx0fH9/d5reE1bA2YfyWrN+LT1+yw2H9dlgAqAZ10WHdqBWiZwXbfT6bXzU855IeWeUGUQDwFa7VYbg2CpN6j+FXDpNS6dZa8P3rzT2BKgCuA2D+4e7tNxWPD5U+WHSmtgxH+WXkq/mDVzXU8ufoExTKV3yIfzD6BIe5fWFpHoLjuxUBoMMEgfb0SekO5FTo8ejAWbglfIzo/SKDwviXO3Xggp6fGILWj9CE0W/+sbnH8MPj8ncK+YQFgMUtYRSAe/snKDpbaFV9DT9V7OrD7/LzAZjLOS4iBil2Zg1/bF9LTOANLmC2YfZlEE7b3gEwpw8O0eE+XYJsLQFa6YbLxfjmTDY/K1hlXbXt92gZEk65wz4EHx3b7RUA5IJwozoKAK3lJZgYMQY39IjmZwlz5XGwqoYaHLygh8FYwt8Yerq6jG0xrcowLjwGX91pB4LM1/Hh8V0SASAlWJLqcGkSKS5gLyGI74gAWB6fthiGhugwtFsUel0Tij5BYejqH8TvR4M90nJ1/1pbxr/TwLDwcjEMxmL+iieE9T3sA0DLdnN4NL6a/A/B339e5mstlkC0BcjDkh1xjupVShCYB8C7Hs6TQTTyp69d57Il9wO4ov3n9ZiWvgpfC0Dw9oSl/MlEB4aE5InJJron0ERM+WLzqnJOFIKp6asEt78dvxT3DxY9hVypmEyiAQhsCNwuNq8q57X/nB4JDiD4k07ELGImIqq+RAOwJW6LEQTe/8huBxAPQZowBO/c4mBqeer/l6e51wXwx+WgWgGFRCGYkioMgV0RkiI2qyQArjYECK/UqMrt+l4Agn1nC+zsRYzE1Pi+2HN0klKgY2/nXx0+P5rjwAm2BoSiYanp7pYz5/eGsp2qLsP3Z/UY0TMKgX4ByL5wDIu/3yQ4fwABXsLSdNGWWnQ/gFmJuQ9qO/vV5xJCdB2xH8Ayj7tuCBHTD2D9PeDEaKCJmIymBr8oLE8xiq1PyTeEpMRtMXIwPSR1P1UKyESWS6l8OHtH0Gexn2UA3AZn9lUljwjIBtOSNNG+3yynbwn7YsSny0HEtTVVySsC8n5TfSenAnSX7gncNvKzGYAKgYeV0VjfSbLpN8vlm0IpBCZC1OahB0TNfkOdZoazlQ9nWgFCSsxNitcQ/Jeg+Z4BtRUgYyvARIwAt7xu/teSfb613AaAWYmHZy2DRvOqCoD7ASAmYjQR8lrdVb8Nrlz1lnI7AOCtQaLWZApcBkIeBDj+KQ0VABcAMJE8E0wpJpPf+3XzU9w6HiMLAJaaknXPqE4cF2/iuAmEEC0AHSGcTgWAAQChVziMBDCCcCUmkHxCNNtrH00RNbCjSpVkdahHw1RJlwqAj0sFwMelAuDjUgHwcakA+LhUAHxcKgA+rv8LAAD//y7nJte52kY7AAAAAElFTkSuQmCC" alt="Author">
+                </div>
+                <!-- 文字區塊 -->
+                <div class="ms-3 text-center text-sm-start">
+                  <!-- 姓名，置中顯示 -->
+                  <div class="d-flex justify-content-center">
+                    <h4 class="card-title mb-3"><strong>HsiupoYeh</strong></h4>
+                  </div>
+                  <!-- 使用 badge 顯示職稱，並置中 -->
+                  <div class="d-flex justify-content-center justify-content-sm-start">
+                    <span class="badge bg-secondary me-2 mb-2 mb-sm-0">地球物理學家</span>
+                    <span class="badge bg-secondary me-2 mb-2 mb-sm-0">資深軟體工程師</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 其他資訊區塊 -->
+              <div class="text-md-start text-center">
+                <!-- 來自 Taiwan -->
+                <div class="mb-2 d-flex align-items-center">
+                  <div class="d-flex justify-content-center align-items-center" style="width: 30px;">
+                    <i class="fas fa-map-marker-alt" title="來自"></i>
+                  </div>
+                  <span>Taiwan</span>
+                </div>
+                <!-- 個人網頁 -->
+                <div class="mb-2 d-flex align-items-center">
+                  <div class="d-flex justify-content-center align-items-center" style="width: 30px;">
+                    <i class="fas fa-link me-2" title="個人網頁"></i>
+                  </div>
+                  <a href="https://hsiupoyeh.github.io/" target="_blank">https://hsiupoyeh.github.io/</a>
+                </div>
+                <!-- GitHub -->
+                <div class="mb-2 d-flex align-items-center">
+                  <div class="d-flex justify-content-center align-items-center" style="width: 30px;">
+                    <i class="fab fa-github me-2" title="GitHub"></i>
+                  </div>
+                  <a href="https://github.com/HsiupoYeh" target="_blank">https://github.com/HsiupoYeh</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 單一卡片展示所有更新紀錄 -->
+          <div class="card shadow-sm mb-4">
+            <div class="card-header">
+              <h5 class="card-title mb-0">更新紀錄</h5>
+            </div>
+            <div class="card-body">
+              <!-- 版本更新 -->
+              <div class="mb-4">
+                <h6 class="card-subtitle mb-2"><strong>2024-12-17</strong></h6>
+                <ul>
+                  <li class="text-dark">v20241217a</li>
+                  <li class="text-secondary">捨棄markdown-it、highlight改用mathpix-markdown-it@2.0.6。因為原本的markdown-it、highlight沒有支援數學公式。</li>
+                  <li class="text-secondary">mathpix-markdown-it@2.0.6相容markdown-it、highlight的許多樣式與擴充功能。</li>
+                </ul>
+              </div>
+              <!-- 分隔線 -->
+              <hr>
+			  <!-- 版本更新 -->
+              <div class="mb-4">
+                <h6 class="card-subtitle mb-2"><strong>2024-12-16</strong></h6>
+                <ul>
+                  <li class="text-dark">v20241216a</li>
+                  <li class="text-secondary">改用Bootstrap5.3.3。</li>
+                  <li class="text-secondary">新使用FontAwesome6.7.1。</li>
+                  <li class="text-secondary">已知問題：當使用程式碼區塊時，渲染內容中若也恰好有「```」會造成渲染異常，因此請先將渲染中的內容用其他內容取代，建議「\```」。</li>
+                </ul>
+              </div>
+              <!-- 分隔線 -->
+              <hr>
+              <!-- 版本更新 -->
+              <div class="mb-4">
+                <h6 class="card-subtitle mb-2"><strong>2024-12-15</strong></h6>
+                <ul>
+                  <li class="text-dark">v20241215a</li>
+                  <li class="text-secondary">初版。</li>
+                  <li class="text-secondary">使用Bootstrap4、markdown-it、highlight等函式庫。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- 存放Markdown原始碼 -->
+<textarea id="markdown-editor" class="d-none">
+# YehMarkDownTemplate v20241217a
++ YEH自製MarkDown模板，方便撰寫文件。
+
+## 使用方法
++ 複製HTML原始碼，編輯id為「markdown-editor」的textarea內容，再另存為HTML檔案。
++ 注意程式碼區塊是由兩個「\```」包圍，若內部也有「\```」會造成渲染錯誤。有時可用「\\```」使其正常顯示，複製後可視需求修改。
+
+### matlab原始碼
+```matlab
+% 最大值 (realmax)
+max_double = realmax('double'); 
+disp(['Double 最大值: ', num2str(max_double)]);
+% 結果: Double 最大值: 1.797693134862316e+308
+% realmax('double') 返回 double 類型的最大值。這是可以表示的最大正數，超過這個值將發生溢位。
+```  
+
+### Markdown原始碼
+```md
+### 怕錯誤的時候多加「\」
+\```javascript
+function greet() {
+    console.log("Hello, world!");
+}
+greet();
+\```
+```  
+
+### 數學公式
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+</textarea>
+
+  <script>    
+    // 取得 Markdown 原始碼
+    const markdownContent = document.getElementById('markdown-editor').value;
+    const markdownContentLines = markdownContent.split('\n');
+    // 以換行符分割成行
+    const markdownContentLinesCount = markdownContentLines.length;
+    // 計算行數
+
+    // 渲染 Markdown 並顯示在第一個標籤頁 (章節內容)
+    const chapterDiv = document.querySelector('#chapter .markdown-body');
+	chapterDiv.innerHTML = window.markdownToHTML(markdownContent, { htmlTags: true });
+
+    // 在第二個標籤頁顯示 Markdown 原始碼 (原始碼)
+    const markdownSource = document.getElementById('markdown-source');
+    markdownSource.textContent = markdownContent;
+    markdownSource.rows = markdownContentLinesCount + 1;
+    // 設置行數
+
+    // 創建複製按鈕並綁定 ID
+    const codeBlocks = document.querySelectorAll('pre code');
+    codeBlocks.forEach(function (codeBlock, index) {
+      const codeBlockId = `code-${index + 1}`;
+      codeBlock.setAttribute('id', codeBlockId);
+
+      const copyButton = document.createElement('button');
+      copyButton.innerText = '複製程式碼';
+      copyButton.classList.add('btn', 'btn-sm', 'btn-outline-primary');
+      copyButton.setAttribute('data-clipboard-target', `#${codeBlockId}`);
+
+      // 把複製按鈕加到程式碼區塊中
+      const codeBlockParent = codeBlock.parentElement;
+      codeBlockParent.classList.add('code-block');
+      codeBlockParent.appendChild(copyButton);
+    });
+
+    // 使用 Clipboard.js 來處理複製功能
+    const clipboard = new ClipboardJS('.btn-outline-primary');
+    clipboard.on('success', function (e) {
+      const copyButton = e.trigger;
+      copyButton.innerText = '已複製！';
+      setTimeout(function () {
+        copyButton.innerText = '複製程式碼';
+      }, 1500);
+      e.clearSelection();
+    });
+
+    clipboard.on('error', function (e) {
+      const copyButton = e.trigger;
+      copyButton.innerText = '複製失敗！';
+      setTimeout(function () {
+        copyButton.innerText = '複製程式碼';
+      }, 1500);
+    });
+  </script>
+</body>
+</html>
